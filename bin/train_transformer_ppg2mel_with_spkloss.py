@@ -265,14 +265,14 @@ class Solver(BaseSolver):
                 # loss, after_outs, before_outs, logits, ys, labels, olens
                 # loss = l1_loss + l2_loss
 
-                # spkdvs = self.compute_secondary_models(before_outs)
-                # spkd_loss = mseloss(spkdvs,spk_ids)
+                spkdvs = self.compute_speaker_embedding(before_outs)
+                spkd_loss = mseloss(spkdvs, spk_ids)
                 # mel_loss = loss.cpu().item()
                 # spk_loss = spkd_loss.cpu().item()
-                # # print('mel-loss',mel_loss)
-                # # print('spk-loss',spk_loss)
+                # print('mel-loss',mel_loss)
+                # print('spk-loss',spk_loss)
                 # # print(lr_rate)
-                # loss = loss + 50*spkd_loss
+                loss = loss + 100*spkd_loss
                 self.timer.cnt("fw")
 
                 # Back-prop
@@ -322,9 +322,10 @@ class Solver(BaseSolver):
                     olens=out_lengths,
                     spembs=spk_ids,
                 )
-                # spkdvs = self.compute_secondary_models(before_outs)
-                # spkd_loss = mseloss(spkdvs,spk_ids)
-                # loss = loss + spkd_loss
+
+                spkdvs = self.compute_speaker_embedding(before_outs)
+                spkd_loss = mseloss(spkdvs,spk_ids)
+                loss = loss + 100*spkd_loss
 
                 # loss = self.loss_criterion(mel_pred, mels, out_lengths)
                 # loss, after_outs, before_outs, logits, ys, labels, olens

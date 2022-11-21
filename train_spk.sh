@@ -1,7 +1,7 @@
 #!/bin/bash
 
 . ./path.sh || exit 1;
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=1
 
 ########## Train Transformer VC model ##########
 
@@ -9,9 +9,9 @@ export CUDA_VISIBLE_DEVICES=0
 # Speaker Embed = notatinput
 # pitch = no
 python main.py --config /mnt/data1/waris/repo/vc-spk-loss/conf/transformer_vc_ppg2mel.yaml \
-               --name=transformer-vc \
+               --name=transformer-vc-spk \
                --seed=2 \
-               --transformervc
+               --transformervcspkloss
 #
 # Status: Running
 #

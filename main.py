@@ -37,7 +37,7 @@ parser.add_argument('--test', action='store_true', help='Test the model.')
 parser.add_argument('--no-msg', action='store_true', help='Hide all messages.')
 parser.add_argument('--finetune', action='store_true', help='Finetune model')
 parser.add_argument('--transformervc', action='store_true', help='Transformer VC model')
-
+parser.add_argument('--transformervcspkloss', action='store_true', help='Transformer VC with Spk Loss model')
 
 ###
 
@@ -68,5 +68,15 @@ if paras.transformervc:
     solver.load_data()
     solver.set_model()
     solver.exec()
-    print(">>> Oneshot VC train finished!")
+    print(">>> Oneshot Transformer VC train finished!")
+    sys.exit(0)
+elif paras.transformervcspkloss:
+    print(">>> Transformer VC - Training")
+    from bin.train_transformer_ppg2mel_with_spkloss import Solver
+    mode = "train"
+    solver = Solver(config, paras, mode)
+    solver.load_data()
+    solver.set_model()
+    solver.exec()
+    print(">>> Oneshot Transformer VC train finished!")
     sys.exit(0)

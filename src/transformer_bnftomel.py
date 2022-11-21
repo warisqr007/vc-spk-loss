@@ -155,30 +155,30 @@ class Transformer(TTSInterface, torch.nn.Module):
             positionwise_conv_kernel_size=args.positionwise_conv_kernel_size,
         )
 
-        self.pitch_convs = torch.nn.Sequential(
-            torch.nn.Conv1d(2, args.adim, kernel_size=1, bias=False),
-            torch.nn.LeakyReLU(0.1),
+        # self.pitch_convs = torch.nn.Sequential(
+        #     torch.nn.Conv1d(2, args.adim, kernel_size=1, bias=False),
+        #     torch.nn.LeakyReLU(0.1),
 
-            torch.nn.InstanceNorm1d(args.adim, affine=False),
-            torch.nn.Conv1d(
-                args.adim, args.adim, 
-                kernel_size=2*2, 
-                stride=2, 
-                padding=2//2,
-            ),
-            torch.nn.LeakyReLU(0.1),
+        #     torch.nn.InstanceNorm1d(args.adim, affine=False),
+        #     torch.nn.Conv1d(
+        #         args.adim, args.adim, 
+        #         kernel_size=2*2, 
+        #         stride=2, 
+        #         padding=2//2,
+        #     ),
+        #     torch.nn.LeakyReLU(0.1),
             
-            torch.nn.InstanceNorm1d(args.adim, affine=False),
-            torch.nn.Conv1d(
-                args.adim, args.adim, 
-                kernel_size=2*2, 
-                stride=2, 
-                padding=2//2,
-            ),
-            torch.nn.LeakyReLU(0.1),
+        #     torch.nn.InstanceNorm1d(args.adim, affine=False),
+        #     torch.nn.Conv1d(
+        #         args.adim, args.adim, 
+        #         kernel_size=2*2, 
+        #         stride=2, 
+        #         padding=2//2,
+        #     ),
+        #     torch.nn.LeakyReLU(0.1),
 
-            torch.nn.InstanceNorm1d(args.adim, affine=False),
-        )
+        #     torch.nn.InstanceNorm1d(args.adim, affine=False),
+        # )
 
 
         # define transformer decoder
@@ -269,7 +269,7 @@ class Transformer(TTSInterface, torch.nn.Module):
         )
         return ys_in
 
-    def forward(self, xs, ilens, ys, olens, logf0_uv=None, spembs=None, *args, **kwargs):
+    def forward(self, xs, ilens, ys, olens, spembs=None, *args, **kwargs):
         """Calculate forward propagation.
 
         Args:
@@ -319,11 +319,11 @@ class Transformer(TTSInterface, torch.nn.Module):
         hs, hs_masks = self.encoder(xs_ds, x_masks)
 
         #add pitch information
-        if self.use_f0:
-            logf0_uv = self.pitch_convs(logf0_uv.transpose(1, 2)).transpose(1, 2)
-            print(logf0_uv.shape)
-            print(hs.shape)
-            hs = hs + logf0_uv
+        # if self.use_f0:
+        #     logf0_uv = self.pitch_convs(logf0_uv.transpose(1, 2)).transpose(1, 2)
+        #     print(logf0_uv.shape)
+        #     print(hs.shape)
+        #     hs = hs + logf0_uv
 
         # integrate speaker embedding
         if self.spk_embed_dim is not None and self.whereusespkd != 'atinput':
@@ -468,7 +468,7 @@ class Transformer(TTSInterface, torch.nn.Module):
 
         return loss, after_outs, before_outs, ys, olens
 
-    def inference(self, x, logf0_uv=None, spemb=None, *args, **kwargs):
+    def inference(self, x, spemb=None, *args, **kwargs):
         """Generate the sequence of features given the sequences of acoustic features.
 
         Args:
@@ -518,11 +518,11 @@ class Transformer(TTSInterface, torch.nn.Module):
             x_ds = self._integrate_with_spk_in_embed(x_ds,spembs)
         hs, _ = self.encoder(x_ds, None)
 
-        if self.use_f0:
-            logf0_uv = self.pitch_convs(logf0_uv.transpose(1, 2)).transpose(1, 2)
-            print(logf0_uv.shape)
-            print(hs.shape)
-            hs = hs + logf0_uv
+        # if self.use_f0:
+        #     logf0_uv = self.pitch_convs(logf0_uv.transpose(1, 2)).transpose(1, 2)
+        #     print(logf0_uv.shape)
+        #     print(hs.shape)
+        #     hs = hs + logf0_uv
 
         # integrate speaker embedding
         if self.spk_embed_dim is not None and self.whereusespkd != 'atinput':
